@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@import "tailwindcss";
+
+@import "tailwindcss";
+
+body {
+  background: radial-gradient(
+      1200px 600px at 70% -10%,
+      rgba(124, 92, 255, 0.12),
+      transparent 60%
+    ),
+    #070b1a;
+  color: white;
+}
+
+
+/* ===== PUBLIC PAGE UI ===== */
+
+.pp-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.pp-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 28px 22px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  color: white;
+}
+
+/* HEADER */
+.pp-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.pp-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: bold;
+  color: #2d2d2d;
+}
+
+.pp-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.pp-subtitle {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+/* LINKS */
+.pp-links {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pp-link {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 14px;
+  border-radius: 14px;
+  text-align: center;
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.pp-link:hover {
+  background: white;
+  color: #4f46e5;
+  transform: translateY(-2px);
+}
+
+/* FOOTER */
+.pp-footer {
+  text-align: center;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 24px;
+}
+
+/* STATES */
+.pp-loading,
+.pp-error {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
