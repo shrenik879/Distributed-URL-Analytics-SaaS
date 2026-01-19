@@ -321,6 +321,87 @@
 //   );
 // }
 
+
+
+
+
+
+
+
+
+
+
+// import { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import api from "../api/axios";
+
+// export default function PublicPage() {
+//   const { pageId } = useParams();
+//   const [page, setPage] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     api
+//       .get(`/page/${pageId}`) // ✅ FIXED ROUTE
+//       .then((res) => setPage(res.data))
+//       .catch(() => setPage(null))
+//       .finally(() => setLoading(false));
+//   }, [pageId]);
+
+//   if (loading) return <div className="pp-loading">Loading...</div>;
+//   if (!page) return <div className="pp-error">Page not found</div>;
+
+//   return (
+//     <div className="pp-container">
+//       <div className="pp-header-bg">
+//         <div className="pp-avatar">
+//           {page.title?.charAt(0).toUpperCase()}
+//         </div>
+//       </div>
+
+//       <div className="pp-card">
+//         <h1 className="pp-name">{page.title}</h1>
+
+//         {/* EMAIL (will show only if backend populates createdBy) */}
+//         <p className="pp-email">{page.createdBy?.email}</p>
+
+//         <p className="pp-subtitle">My important links</p>
+
+//         <div className="pp-links">
+//           {page.links.map((link) => (
+//             <a
+//               key={link._id}
+//               href={link.url}
+//               target="_blank"
+//               rel="noreferrer"
+//               className="pp-link"
+//             >
+//               {link.label}
+//             </a>
+//           ))}
+//         </div>
+
+//         <div className="pp-footer">
+//           Powered by <span>LinkShrink</span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/axios";
