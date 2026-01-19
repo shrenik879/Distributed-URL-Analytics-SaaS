@@ -12,13 +12,17 @@ const userRoute = require('./routes/user');
 const pageRoute = require("./routes/page");
 
 const app = express();
-const PORT = 8002;
+app.use(express.urlencoded({ extended: true }));
+const PORT = process.env.PORT || 8002;
 app.use(
   cors({
-      origin: process.env.VITE_FRONTEND_URL, // frontend (Vite)
+      origin: process.env.FRONTEND_URL, // frontend (Vite)
     credentials: true,
+     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 )
+app.options("*", cors());
 // Middleware 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -30,7 +34,7 @@ app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 // Database 
-connectToMongoDB('mongodb://127.0.0.1:27017/short-url')
+connectToMongoDB(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection failed:", err));
 

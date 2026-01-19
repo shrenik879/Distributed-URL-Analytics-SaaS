@@ -86,7 +86,7 @@ async function handleGenerateNewShortURL(req, res) {
 
     return res.status(201).json({
       shortId: entry.shortId,
-      shortUrl: `${process.env.VITE_BACKEND_URL}/url/${entry.shortId}`,
+      shortUrl: `${process.env.BASE_URL}/url/${entry.shortId}`,
     });
 
   } catch (err) {
