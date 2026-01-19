@@ -2652,6 +2652,9 @@ const Card = ({ children }) => {
 export default function URLShortener() {
   const [activeTab, setActiveTab] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
+ 
+
+
 
 
   /* ================= DASHBOARD ================= */
@@ -2681,6 +2684,19 @@ export default function URLShortener() {
   const [pageData, setPageData] = useState(null);
   const [linkLabel, setLinkLabel] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+
+
+  //login//
+   useEffect(() => {
+  api.get("/user/me")
+    .then((res) => {
+      setCurrentUser(res.data.user);
+    })
+    .catch(() => {
+      // Not logged in → redirect to login
+      window.location.href = "/login";
+    });
+}, []);
 
   /* ================= LOGOUT ================= */
   const handleLogout = async () => {
@@ -2883,9 +2899,15 @@ const handleDeletePage = async () => {
   );
 
 
+if (!currentUser) {
+  return (
+    <div className="min-h-screen flex items-center justify-center text-white">
+      Loading...
+    </div>
+  );
+}
 
-
-
+  
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white">
       {/* SIDEBAR */}
