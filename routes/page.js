@@ -205,7 +205,7 @@ router.post("/create", checkForAuthentication, handleCreatePage);
 router.post("/link", checkForAuthentication, handleAddLink);
 
 // PUBLIC
-router.get("/:pageId", handleGetPublicPage);
+router.get("/public/:pageId", handleGetPublicPage);
 
 // REDIRECT
 router.get("/:pageId/:linkId", async (req, res) => {
