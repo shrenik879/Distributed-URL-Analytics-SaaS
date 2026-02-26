@@ -142,9 +142,9 @@ export default function DashboardLayout() {
     };
 
     return (
-        <div className="flex min-h-screen bg-cream">
+        <div className="flex h-screen bg-cream overflow-hidden">
             {/* Desktop Sidebar */}
-            <aside className={`hidden lg:flex flex-col bg-white border-r border-border transition-all duration-300 ${collapsed ? "w-16" : "w-56"} sticky top-0 h-screen overflow-y-auto`}>
+            <aside className={`hidden lg:flex flex-col bg-white border-r border-border transition-all duration-300 ${collapsed ? "w-16" : "w-56"} flex-shrink-0 relative z-40 h-full overflow-y-auto`}>
                 <SidebarContent />
             </aside>
 
@@ -159,9 +159,9 @@ export default function DashboardLayout() {
             )}
 
             {/* Main content */}
-            <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
                 {/* Top bar */}
-                <header className="bg-white border-b border-border h-14 flex items-center px-4 gap-3 sticky top-0 z-30">
+                <header className="bg-white border-b border-border h-14 flex items-center px-4 gap-3 z-30 flex-shrink-0">
                     <button onClick={() => setMobileOpen(true)} className="lg:hidden p-2 -ml-2 hover:bg-gray-50 rounded-lg transition">
                         <Menu size={18} className="text-warm-gray" />
                     </button>
