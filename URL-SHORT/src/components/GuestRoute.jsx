@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 /**
@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
  */
 export default function GuestRoute({ children }) {
     const { user, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
         return (
@@ -21,7 +22,8 @@ export default function GuestRoute({ children }) {
     }
 
     if (user) {
-        return <Navigate to="/dashboard" replace />;
+        const redirectUrl = new URLSearchParams(location.search).get("redirect") || "/dashboard";
+        return <Navigate to={redirectUrl} replace />;
     }
 
     return children;
