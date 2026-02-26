@@ -21,25 +21,39 @@ app.use(express.urlencoded({ extended: true }));
 const PORT = process.env.PORT || 8002;
 
 // CORS — allow both user frontend (5173) and admin panel (5174)
+// CORS — allow both user frontend (5173) and admin panel (5174)
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.ADMIN_URL || "http://localhost:5174",
+  "https://url-shortener-git-main-shrenik-kondekars-projects.vercel.app",
+  "https://url-shortener-theta-self.vercel.app"
 ];
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, false);
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      // Allow precise matches
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      // Allow any Vercel preview branch deployment
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.options("*", cors());
+
+
+// app.options("*", cors());
 
 // Middleware 
 app.use(express.json());
