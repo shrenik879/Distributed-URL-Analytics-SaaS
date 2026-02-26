@@ -171,7 +171,7 @@ export default function DashboardLayout() {
                     {/* Upgrade button — always visible */}
                     <button
                         onClick={() => navigate("/dashboard/pricing")}
-                        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange text-white text-xs font-semibold hover:bg-orange-hover transition-all duration-200 hover:shadow-md"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange text-white text-xs font-semibold hover:bg-orange-hover transition-all duration-200 hover:shadow-md"
                     >
                         <Crown size={12} /> Upgrade
                     </button>

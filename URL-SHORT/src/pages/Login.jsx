@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -23,6 +23,8 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false);
   const { setUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectUrl = new URLSearchParams(location.search).get("redirect") || "/dashboard";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,7 +35,7 @@ export default function Login() {
       await api.post("/user/login", { email, password });
       const res = await api.get("/user/me");
       setUser(res.data.user);
-      navigate("/dashboard");
+      navigate(redirectUrl);
     } catch {
       setError("Invalid email or password");
     } finally {
@@ -53,7 +55,7 @@ export default function Login() {
         await api.post("/user/google-login", { credential: null, googleUser: gUser });
         const res = await api.get("/user/me");
         setUser(res.data.user);
-        navigate("/dashboard");
+        navigate(redirectUrl);
       } catch {
         setError("Google login failed. Try again.");
       } finally {

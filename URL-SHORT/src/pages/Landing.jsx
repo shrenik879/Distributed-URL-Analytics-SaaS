@@ -337,7 +337,7 @@ export default function Landing() {
     ];
 
     const handleUpgrade = async (plan) => {
-        if (!user) return (window.location.href = "/signup");
+        if (!user) return (window.location.href = "/login?redirect=/dashboard/pricing");
         if (!plan) return (window.location.href = "/dashboard");
         // Prevent re-purchasing current or lower plan
         const PLAN_ORDER = [null, "CORE", "GROWTH", "PREMIUM"];

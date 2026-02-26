@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -24,6 +24,8 @@ export default function Signup() {
   const [showPw, setShowPw] = useState(false);
   const { setUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectUrl = new URLSearchParams(location.search).get("redirect") || "/dashboard";
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -33,7 +35,9 @@ export default function Signup() {
     setLoading(true);
     try {
       const res = await api.post("/user", { name, email, password });
-      if (res.status === 201) navigate("/login");
+      if (res.status === 201) {
+        navigate(redirectUrl !== "/dashboard" ? `/login?redirect=${encodeURIComponent(redirectUrl)}` : "/login");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Something went wrong");
     } finally {
@@ -53,7 +57,7 @@ export default function Signup() {
         await api.post("/user/google-login", { credential: null, googleUser: gUser });
         const res = await api.get("/user/me");
         setUser(res.data.user);
-        navigate("/dashboard");
+        navigate(redirectUrl);
       } catch {
         setError("Google signup failed. Try again.");
       } finally {

@@ -43,7 +43,7 @@ export default function PricingPage() {
     const userPlan = user?.plan || "FREE";
 
     const handleUpgrade = async (planId) => {
-        if (!user) return (window.location.href = "/signup");
+        if (!user) return (window.location.href = "/login?redirect=/dashboard/pricing");
         if (planId === "FREE") return (window.location.href = "/dashboard");
         if (PLAN_ORDER.indexOf(planId) <= PLAN_ORDER.indexOf(userPlan)) {
             return addToast("You already have this plan or a higher one", "error");
