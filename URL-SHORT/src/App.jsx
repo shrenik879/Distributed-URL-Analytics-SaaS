@@ -34,7 +34,7 @@ export default function App() {
         <ToastProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<GuestRoute><Landing /></GuestRoute>} />
+              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
               <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
               <Route path="/pricing" element={<PricingPage />} />
