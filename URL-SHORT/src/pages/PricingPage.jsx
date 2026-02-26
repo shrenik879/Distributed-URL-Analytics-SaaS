@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/ui/Toast";
 import api from "../api/axios";
@@ -39,8 +39,15 @@ const PLANS = [
 export default function PricingPage() {
     const { user, setUser } = useAuth();
     const { addToast } = useToast();
+    const location = useLocation();
     const [loadingPlan, setLoadingPlan] = useState(null);
     const userPlan = user?.plan || "FREE";
+
+    // If user is already logged in and navigates to the public /pricing page,
+    // redirect them to the dashboard pricing page for a seamless experience
+    if (user && !location.pathname.startsWith("/dashboard")) {
+        return <Navigate to="/dashboard/pricing" replace />;
+    }
 
     const handleUpgrade = async (planId) => {
         if (!user) return (window.location.href = "/login?redirect=/dashboard/pricing");
