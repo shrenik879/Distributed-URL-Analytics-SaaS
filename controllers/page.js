@@ -316,33 +316,85 @@
 
 
 const Page = require("../models/page");
+const User = require("../models/user");
+
+// Plan-based landing page limits
+const PAGE_LIMITS = {
+  FREE: 1,
+  CORE: 5,
+  GROWTH: 10,
+  PREMIUM: 20,
+};
 
 // CREATE PAGE
 async function handleCreatePage(req, res) {
-  if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
 
-  const exists = await Page.findOne({ createdBy: req.user._id });
-  if (exists) return res.status(400).json({ error: "Page already exists" });
+    const user = await User.findById(req.user._id);
+    const plan = user?.plan || "FREE";
+    const limit = PAGE_LIMITS[plan] ?? 1;
 
-  const page = await Page.create({
-    title: req.body.title,
-    createdBy: req.user._id,
-  });
+    // FREE plan: history-based — once used (even if deleted), no more
+    // Paid plans: current-count based — deletion frees slots
+    let usedCount;
+    if (plan === "FREE") {
+      usedCount = user.pagesCreatedCount || 0;
+    } else {
+      usedCount = await Page.countDocuments({ createdBy: req.user._id });
+    }
 
-  res.status(201).json(page);
+    if (usedCount >= limit) {
+      return res.status(403).json({
+        error: plan === "FREE"
+          ? "Free plan allows 1 landing page lifetime. Upgrade to create more."
+          : `Your ${plan} plan allows ${limit} landing pages. Upgrade to create more.`,
+        limitReached: true,
+        currentPlan: plan,
+        limit,
+        used: usedCount,
+      });
+    }
+
+    const pageData = { title: req.body.title, createdBy: req.user._id };
+    if (req.body.theme) pageData.theme = req.body.theme;
+
+    const page = await Page.create(pageData);
+
+    // Increment history counter for all plans
+    await User.findByIdAndUpdate(req.user._id, { $inc: { pagesCreatedCount: 1 } });
+
+    res.status(201).json(page);
+  } catch (err) {
+    console.error("handleCreatePage error:", err);
+    res.status(500).json({ error: "Failed to create page. Please try again." });
+  }
 }
 
 // ADD LINK
 async function handleAddLink(req, res) {
-  if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+  try {
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
 
-  const page = await Page.findOne({ createdBy: req.user._id });
-  if (!page) return res.status(404).json({ error: "Page not found" });
+    const { pageId, label, url } = req.body;
+    let page;
 
-  page.links.push(req.body);
-  await page.save();
+    if (pageId) {
+      page = await Page.findOne({ _id: pageId, createdBy: req.user._id });
+    } else {
+      page = await Page.findOne({ createdBy: req.user._id });
+    }
 
-  res.json(page);
+    if (!page) return res.status(404).json({ error: "Page not found" });
+
+    page.links.push({ label, url });
+    await page.save();
+
+    res.json(page);
+  } catch (err) {
+    console.error("handleAddLink error:", err);
+    res.status(500).json({ error: "Failed to add link. Please try again." });
+  }
 }
 
 // GET PUBLIC PAGE

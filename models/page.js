@@ -112,7 +112,15 @@ const pageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       required: true,
-      unique: true, // 🔥 ONE PAGE PER USER
+      // Note: NOT unique — users can have multiple pages (limits enforced in controller)
+    },
+
+    theme: {
+      headerBg: { type: String, default: "linear-gradient(135deg, #EE6123 0%, #d4510f 100%)" },
+      textColor: { type: String, default: "#fff" },
+      linkBg: { type: String, default: "#fff" },
+      linkText: { type: String, default: "#EE6123" },
+      avatarBg: { type: String, default: "rgba(255,255,255,0.2)" },
     },
 
     links: [

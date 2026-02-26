@@ -20,11 +20,23 @@ const urlSchema = new mongoose.Schema(
       },
     ],
     qrCode: String,
+    title: { type: String, default: null },
+    qrColor: { type: String, default: "#0B1736" },
+    isQRCode: { type: Boolean, default: false },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
+    },
+    customDomain: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CustomDomain",
+      default: null,
     }
- 
+
   },
   { timestamps: true } // Auto-add createdAt & updatedAt fields
 );

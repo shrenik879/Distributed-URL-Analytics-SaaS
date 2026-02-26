@@ -195,10 +195,26 @@ const {
 const { checkForAuthentication } = require("../middlewares/auth");
 
 // AUTH
+const User = require("../models/user");
+const PAGE_LIMITS_ROUTE = { FREE: 1, CORE: 5, GROWTH: 10, PREMIUM: 20 };
+
 router.get("/me", checkForAuthentication, async (req, res) => {
-  const page = await Page.findOne({ createdBy: req.user._id });
-  if (!page) return res.status(404).json({ error: "No page" });
-  res.json(page);
+  try {
+    const pages = await Page.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
+    const user = await User.findById(req.user._id);
+    const plan = user?.plan || "FREE";
+    const limit = PAGE_LIMITS_ROUTE[plan] ?? 1;
+    const pagesCreatedCount = user?.pagesCreatedCount || 0;
+
+    // FREE: history-based (once used, can't create again)
+    // Paid: current-count based (deletion frees slots)
+    const usedForLimit = plan === "FREE" ? pagesCreatedCount : pages.length;
+    const canCreate = usedForLimit < limit;
+
+    res.json({ pages, plan, limit, used: pages.length, pagesCreatedCount, canCreate });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 router.post("/create", checkForAuthentication, handleCreatePage);
@@ -221,42 +237,34 @@ router.get("/:pageId/:linkId", async (req, res) => {
 router.delete("/link/:linkId", checkForAuthentication, async (req, res) => {
   try {
     const { linkId } = req.params;
-
-    const page = await Page.findOne({
-      createdBy: req.user._id,
-    });
-
-    if (!page) {
-      return res.status(404).json({ error: "Page not found" });
-    }
-
-    page.links = page.links.filter(
-      (l) => l._id.toString() !== linkId
-    );
-
+    const page = await Page.findOne({ createdBy: req.user._id, "links._id": linkId });
+    if (!page) return res.status(404).json({ error: "Page not found" });
+    page.links = page.links.filter((l) => l._id.toString() !== linkId);
     await page.save();
-
     return res.json(page);
   } catch (err) {
-    console.error("Delete link error:", err);
     return res.status(500).json({ error: "Server error" });
   }
 });
 
-// ❌ DELETE PAGE (OWNER ONLY)
-router.delete("/delete", checkForAuthentication, async (req, res) => {
+// ❌ DELETE PAGE BY ID (OWNER ONLY)
+router.delete("/delete/:pageId", checkForAuthentication, async (req, res) => {
   try {
-    const page = await Page.findOneAndDelete({
-      createdBy: req.user._id,
-    });
-
-    if (!page) {
-      return res.status(404).json({ error: "Page not found" });
-    }
-
+    const page = await Page.findOneAndDelete({ _id: req.params.pageId, createdBy: req.user._id });
+    if (!page) return res.status(404).json({ error: "Page not found" });
     return res.json({ message: "Page deleted successfully" });
   } catch (err) {
-    console.error("Delete page error:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ❌ LEGACY DELETE PAGE (OWNER ONLY — deletes most recent page for backward compat)
+router.delete("/delete", checkForAuthentication, async (req, res) => {
+  try {
+    const page = await Page.findOneAndDelete({ createdBy: req.user._id });
+    if (!page) return res.status(404).json({ error: "Page not found" });
+    return res.json({ message: "Page deleted successfully" });
+  } catch (err) {
     return res.status(500).json({ error: "Server error" });
   }
 });

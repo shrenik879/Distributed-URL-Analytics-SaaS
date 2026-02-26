@@ -21,14 +21,22 @@ const {
   handleGetAnalytics,
   handleGetQRCode,
   handleDownloadQRCode,
+  handleDeleteURL,
+  handleGetQRAnalytics,
 } = require("../controllers/url");
 
 // 🔐 PROTECTED (USER-SPECIFIC)
 router.post("/", checkForAuthentication, handleGenerateNewShortURL);
 router.get("/", checkForAuthentication, handleGetAllURLs);
 
+// 🔐 DELETE URL (OWNER ONLY)
+router.delete("/:id", checkForAuthentication, handleDeleteURL);
+
 // 🔐 ANALYTICS (OWNER ONLY)
 router.get("/analytics/:shortId", checkForAuthentication, handleGetAnalytics);
+
+// 🔐 QR ANALYTICS (OWNER ONLY)
+router.get("/qr-analytics/:id", checkForAuthentication, handleGetQRAnalytics);
 
 // 🌍 PUBLIC
 router.get("/qr/:shortId", handleGetQRCode);

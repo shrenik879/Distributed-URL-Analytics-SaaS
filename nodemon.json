@@ -1,0 +1,10 @@
+{
+    "watch": [
+        "."
+    ],
+    "ignore": [
+        "admin-panel/",
+        "URL-SHORT/",
+        "node_modules/"
+    ]
+}

@@ -1,6 +1,6 @@
-const {v4: uuidv4}=require('uuid')
+const { v4: uuidv4 } = require('uuid')
 const User = require('../models/user');
-const {setUser}=require('../service/auth');
+const { setUser } = require('../service/auth');
 
 // async function handleUserSignup(req,res) {
 //     const {name, email ,password } = req.body;
@@ -56,15 +56,17 @@ async function handleUserLogin(req, res) {
   }
 
   const token = setUser(user);
-  
+
+  const isLocal = !process.env.NODE_ENV || process.env.NODE_ENV === "development" || (req.hostname === "localhost");
   res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,        // REQUIRED on Render (HTTPS)
-  sameSite: "none",    // REQUIRED for Vercel ↔ Render
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-});
+    httpOnly: true,
+    secure: !isLocal,
+    sameSite: isLocal ? "lax" : "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
   return res.json({
     message: "Login successful",
+    token: token,
     user: {
       _id: user._id,
       email: user.email,
@@ -74,6 +76,6 @@ async function handleUserLogin(req, res) {
 }
 
 module.exports = {
-    handleUserSignup,
-    handleUserLogin,
+  handleUserSignup,
+  handleUserLogin,
 }
