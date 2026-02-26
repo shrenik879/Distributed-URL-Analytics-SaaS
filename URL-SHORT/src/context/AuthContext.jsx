@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         await api.post("/user/logout");
         setUser(null);
-        window.location.href = "/login";
+        window.location.href = "/";
     };
 
     return (
