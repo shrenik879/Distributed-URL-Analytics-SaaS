@@ -136,7 +136,12 @@ router.post("/change-password", checkForAuthentication, async (req, res) => {
 
 // ✅ LOGOUT
 router.post("/logout", (req, res) => {
-  res.clearCookie("token");
+  const isLocal = !process.env.NODE_ENV || process.env.NODE_ENV === "development" || (req.hostname === "localhost");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: !isLocal,
+    sameSite: isLocal ? "lax" : "none",
+  });
   return res.json({ message: "Logged out successfully" });
 });
 
